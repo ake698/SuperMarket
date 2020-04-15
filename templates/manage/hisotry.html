@@ -1,0 +1,106 @@
+{% extends 'manage/base/base.html' %}
+
+{% block content %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                                操作历史
+         <div class="w3l_search float-right">
+    			<form action="/history/" method="get">
+    				<input type="search" name="Search" style="Float:left;height:35px;font-size: 16px" placeholder="搜索" required="">
+    				<button type="submit" class="btn btn-primary" style="Float:left;height:35px" aria-label="Left Align">
+    					<i class="fa fa-search" aria-hidden="true"> </i>
+    				</button>
+    				<div class="clearfix"></div>
+    			</form>
+                
+		      </div>
+
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>用户</th>
+                                        <th>操作</th>
+                                        <th>操作时间</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody style="height: 300px;overflow-y: auto">
+                                    {% for g in history %}
+                                    <tr>
+                                        <td>
+                                            <span>{{ g.id }}</span>
+                                        </td>
+                                        <td>{{ g.user.nickname }}</td>
+                                        <td>{{ g.action }}</td>
+                                        <td class="text-nowrap">{{ g.createTime }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+
+
+            <!-- //页码选择菜单 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+
+{% endblock %}
+{% block js %}
+    <script>
+    // 控制输入框只能输入整数或者浮点数
+    function CheckInputIntFloat(oInput) {
+        if('' != oInput.value.replace(/\d{1,}\.{0,1}\d{0,}/,'')) {
+            oInput.value = oInput.value.match(/\d{1,}\.{0,1}\d{0,}/) == null ? '' :oInput.value.match(/\d{1,}\.{0,1}\d{0,}/);
+            }
+    }
+    // 输入框回车事件
+    $('.lower_input').keydown(function(e) {
+            {#$(this).siblings().css('display', '');#}
+           if (e.keyCode == 13) {
+                {#console.log($(this).siblings());#}
+                console.log($(this).find('.lower_check'));
+                $(this).find('.lower_check').click();
+           }
+           if (e.keyCode == 27) {
+                {#console.log($(this).siblings());#}
+                console.log($(this).find('.lower_check'));
+                $(this).find('.lower_cancel').click();
+           }
+      });
+    // 回车ajax
+    $('.lower_check').click(function () {
+        var data = {
+            id: $(this).siblings('input').attr('id'),
+            lower: $(this).siblings('input').val(),
+        };
+        console.log(data);
+        $.post('/good_lower/', data, function (text, status) {
+            alert(text);
+            if(text==="ok"){
+                console.log("okok");
+                $('.lower_cancel').click();
+                window.location.reload();
+                {#$(".card-body").load(location.href + " .card-body");#}
+                {#$(".hover_span").load(location.href + " .hover_span");#}
+            }
+            else{
+                console.log("nono");
+            }
+        });
+    });
+    {% if flag %}
+        alert("{{ msg }}");
+    {% endif %}
+
+
+
+    </script>
+{% endblock %}

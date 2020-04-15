@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}超市管理系统{% endblock %}</title>
+    {% load staticfiles %}
+    <link rel='stylesheet' href='/static/css/simple-line-icons.css'>
+    <link rel='stylesheet' href='/static/css/fontawesome-all.min.css'>
+    <link rel='stylesheet' href='/static/css/styles.css'>
+    {% block css %}
+        <link rel='stylesheet' href='/static/css/styles2.css'>
+    {% endblock %}
+</head>
+<body class="sidebar-fixed header-fixed">
+<div class="page-wrapper">
+        <nav class="navbar page-header">
+        <a href="#" class="btn btn-link sidebar-mobile-toggle d-md-none mr-auto">
+            <i class="fa fa-bars"></i>
+        </a>
+
+        <a class="navbar-brand" href="#">
+            <span class="navbar-brand b_span">
+                超市管理系统
+            </span>
+        </a>
+
+        <a href="#" class="btn btn-link sidebar-toggle d-md-down-none">
+            <i class="fa fa-bars"></i>
+        </a>
+{#            <a href="" class="btn btn-link sidebar-toggle d-md-down-none" id="sidebar_toggle">#}
+{#                <i class="fa fa-bars"></i>#}
+{#            </a>#}
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item d-md-down-none">
+                    <span class="time" style="font-size: .900rem; color: #fff; margin-right: 20px"></span>
+                </li>
+
+
+
+                    <a class="nav-link" href="#">
+                        <span class="small ml-1 d-md-down-none" style="color: #fff">{{ request.session.nickName }}</span>
+                    </a>
+
+                </li>
+            </ul>
+        </nav>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <nav class="sidebar-nav">
+                <ul class="nav">
+                    <span class="nav-title">超市</span>
+                    <li class="nav-item">
+                        <a href="/goods/" class="nav-link">
+                            <i class="icon icon-pie-chart"></i> 概况
+                        </a>
+                    </li>
+                    <li class="nav-item nav-dropdown">
+                        <a href="#" class="nav-link nav-dropdown-toggle">
+                            <i class="icon icon-pencil"></i> 商品信息 <i class="fa fa-caret-left"></i>
+                        </a>
+                        <ul class="nav-dropdown-items">
+                            <li class="nav-item">
+                                <a href="/goods/" class="nav-link">
+                                    商品查询
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+
+                    {% if request.session.identity == "0" or request.session.identity == "2" %}
+                    <li class="nav-item nav-dropdown">
+                        <a href="#" class="nav-link nav-dropdown-toggle">
+                            <i class="icon icon-home"></i> 订单查询 <i class="fa fa-caret-left"></i>
+                        </a>
+
+                        <ul class="nav-dropdown-items">
+                            <li class="nav-item">
+                                <a href="/order/" class="nav-link">历史订单</a>
+                            </li>
+
+                        </ul>
+                    </li>
+                    {% endif %}
+
+                {% if request.session.identity == "1" or request.session.identity == "0" %}
+                    <li class="nav-item nav-dropdown">
+                        <a href="#" class="nav-link nav-dropdown-toggle">
+                            <i class="icon icon-home"></i>
+                            进货管理
+                            <i class="fa fa-caret-left"></i>
+                        </a>
+                        <ul class="nav-dropdown-items">
+                            <li class="nav-item">
+                                <a href="/purchaselist/" class="nav-link">所有进货单</a>
+                            </li>
+                            {% if request.session.identity == "1" %}
+                            <li class="nav-item">
+                                <a href="/addpurchase/" class="nav-link">新建进货单</a>
+                            </li>
+                            {% endif %}
+                        </ul>
+                    </li>
+                {% endif %}
+                {% if request.session.identity == "1" or request.session.identity == "0" %}
+                    <li class="nav-item">
+                        <a href="/supplier/" class="nav-link">
+                            <i class="icon icon-clock"></i> 供应商信息
+                        </a>
+
+{#                        <ul class="nav-dropdown-items">#}
+{#                            <li class="nav-item">#}
+{#                                <a href="/records" class="nav-link">记录查询</a>#}
+{#                            </li>#}
+{#                        </ul>#}
+                    </li>
+                {% endif %}
+
+
+                {% if request.session.identity == "0" %}
+                    <li class="nav-item nav-dropdown">
+                        <a href="#" class="nav-link nav-dropdown-toggle">
+                            <i class="icon icon-graph"></i> 统计数据 <i class="fa fa-caret-left"></i>
+                        </a>
+
+                        <ul class="nav-dropdown-items">
+                            <li class="nav-item">
+                                <a href="/dashboard/" class="nav-link">销售额统计(天)</a>
+                            </li>
+                        </ul>
+                        <ul class="nav-dropdown-items">
+                            <li class="nav-item">
+                                <a href="/dashboardym/" class="nav-link">销售额统计(年-月)</a>
+                            </li>
+                        </ul>
+
+                    </li>
+                {% endif %}
+
+                {% if request.session.identity == "2" %}
+                    <li class="nav-item">
+                         <a href="/sale/" class="nav-link">
+                            <i class="icon icon-clock"></i> 销售台
+                        </a>
+                    </li>
+                {% endif %}
+                    <li class="nav-item">
+                        <a href="/history/" class="nav-link">
+                            <i class="icon icon-clock"></i> 操作历史
+                        </a>
+
+{#                        <ul class="nav-dropdown-items">#}
+{#                            <li class="nav-item">#}
+{#                                <a href="/records" class="nav-link">记录查询</a>#}
+{#                            </li>#}
+{#                        </ul>#}
+                    </li>
+                    <span class="nav-title">系统</span>
+
+                    <li class="nav-item">
+                        <a href="/login/" class="nav-link">
+                            <i class="icon icon-user"></i>  切换账号
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link" onclick="window.location.href='/logout/'">
+                            <i class="icon icon-power"></i> 退出登录
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="content">
+            {% block content %}
+                base.html
+            {% endblock %}
+        </div>
+    </div>
+
+</div>
+
+
+
+<script src="/static/js/jquery-3.1.1.min.js"></script>
+<script src="/static/js/popper.min.js"></script>
+<script src="/static/js/bootstrap.min.js"></script>
+<script src="/static/js/chart.min.js"></script>
+<script src="/static/js/carbon.js"></script>
+<script src="/static/js/demo.js"></script>
+<script src="/static/js/b_demo.js"></script>
+<script src="/static/js/time.js"></script>
+    {% block js %}
+    {% endblock %}
+</body>
+</html>

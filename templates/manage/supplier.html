@@ -1,0 +1,115 @@
+{% extends 'manage/base/base.html' %}
+
+{% block content %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                                供应商信息
+         <div class="w3l_search float-right">
+    			<form action="/supplier/" method="get">
+    				<input type="search" name="Search" style="Float:left;height:35px;font-size: 16px" placeholder="搜索" required="">
+    				<button type="submit" class="btn btn-primary" style="Float:left;height:35px" aria-label="Left Align">
+    					<i class="fa fa-search" aria-hidden="true"> </i>
+    				</button>
+    				<div class="clearfix"></div>
+    			</form>
+                
+		      </div>
+
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>名称</th>
+                                        <th>联系方式</th>
+                                        <th>地址</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody style="height: 300px;overflow-y: auto">
+                                    {% for s in supplier %}
+                                    <tr>
+                                        <td>
+                                            <span>{{ s.id }}</span>
+                                        </td>
+                                        <td>{{ s.name }}</td>
+                                        <td>{{ s.phone }}</td>
+                                        <td class="text-nowrap">{{ s.address }}</td>
+
+{#                                        <td id="preserve">#}
+{#                                            <div class="hover_span">#}
+{#                                                <span>{{ g.left_num }}</span>#}
+{#                                                <button type="button" style="display: none;" class="btn btn-outline-primary" id="purchase" name="{{ g.id }}">#}
+{#                                                    进货#}
+{#                                                </button>#}
+{#                                            </div>#}
+{#                                        </td>#}
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+
+
+            <!-- //页码选择菜单 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+
+{% endblock %}
+{% block js %}
+    <script>
+    // 控制输入框只能输入整数或者浮点数
+    function CheckInputIntFloat(oInput) {
+        if('' != oInput.value.replace(/\d{1,}\.{0,1}\d{0,}/,'')) {
+            oInput.value = oInput.value.match(/\d{1,}\.{0,1}\d{0,}/) == null ? '' :oInput.value.match(/\d{1,}\.{0,1}\d{0,}/);
+            }
+    }
+    // 输入框回车事件
+    $('.lower_input').keydown(function(e) {
+            {#$(this).siblings().css('display', '');#}
+           if (e.keyCode == 13) {
+                {#console.log($(this).siblings());#}
+                console.log($(this).find('.lower_check'));
+                $(this).find('.lower_check').click();
+           }
+           if (e.keyCode == 27) {
+                {#console.log($(this).siblings());#}
+                console.log($(this).find('.lower_check'));
+                $(this).find('.lower_cancel').click();
+           }
+      });
+    // 回车ajax
+    $('.lower_check').click(function () {
+        var data = {
+            id: $(this).siblings('input').attr('id'),
+            lower: $(this).siblings('input').val(),
+        };
+        console.log(data);
+        $.post('/good_lower/', data, function (text, status) {
+            alert(text);
+            if(text==="ok"){
+                console.log("okok");
+                $('.lower_cancel').click();
+                window.location.reload();
+                {#$(".card-body").load(location.href + " .card-body");#}
+                {#$(".hover_span").load(location.href + " .hover_span");#}
+            }
+            else{
+                console.log("nono");
+            }
+        });
+    });
+    {% if flag %}
+        alert("{{ msg }}");
+    {% endif %}
+
+
+
+    </script>
+{% endblock %}

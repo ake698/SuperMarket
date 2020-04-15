@@ -1,0 +1,132 @@
+{% extends 'manage/base/base.html' %}
+
+{% block content %}
+    <div class="row mt-4">
+        <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                                进货单 &ensp;
+                           <a class="btn btn-primary" onclick="window.location.href='/purchase/'">
+					添加商品
+				</a>
+         <div class="w3l_search float-right">
+    			<form action="/goods/" method="get">
+                    <div>
+                        <select class="form-control" name="supplier" id="supplier">
+                            {% for s in supplier %}
+                              <option value="{{ s.id }}">{{ s.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+{#    				<input type="search" name="Search" style="Float:left;height:35px;font-size: 16px" placeholder="搜索" required="">#}
+{#    				<button type="submit" class="btn btn-primary" style="Float:left;height:35px" aria-label="Left Align">#}
+{#    					<i class="fa fa-search" aria-hidden="true"> </i>#}
+{#    				</button>#}
+    				<div class="clearfix"></div>
+    			</form>
+                
+		      </div>
+
+                        </div>
+
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>名称</th>
+                                        <th>进货价</th>
+                                        <th>数量</th>
+                                        <th>总价</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody style="height: 300px;overflow-y: auto">
+                                    {% for g in purchase.purchases.all %}
+                                    <tr>
+                                        <td>
+                                            <span>{{ g.id }}</span>
+                                        </td>
+                                        <td>{{ g.goods.name }}</td>
+                                        <td class="text-nowrap">{{ g.goods_price }}</td>
+                                        <td>{{ g.purchase_num }}</td>
+                                        <td>{{ g.sum_price }}</td>
+                                        <td>
+                                            <button type="button" class="btn btn-outline-primary" onclick="deleteRecoad({{ g.id }})">删除</button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            <hr>
+                                <button type="submit" class="btn btn-primary" style="float: right;margin-right: 10%" onclick="save_purchase()">保存</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    </div>
+
+{% endblock %}
+{% block js %}
+    <script>
+    // 控制输入框只能输入整数或者浮点数
+    function CheckInputIntFloat(oInput) {
+        if('' != oInput.value.replace(/\d{1,}\.{0,1}\d{0,}/,'')) {
+            oInput.value = oInput.value.match(/\d{1,}\.{0,1}\d{0,}/) == null ? '' :oInput.value.match(/\d{1,}\.{0,1}\d{0,}/);
+            }
+    }
+    // 输入框回车事件
+    $('.lower_input').keydown(function(e) {
+            {#$(this).siblings().css('display', '');#}
+           if (e.keyCode == 13) {
+                {#console.log($(this).siblings());#}
+                console.log($(this).find('.lower_check'));
+                $(this).find('.lower_check').click();
+           }
+           if (e.keyCode == 27) {
+                {#console.log($(this).siblings());#}
+                console.log($(this).find('.lower_check'));
+                $(this).find('.lower_cancel').click();
+           }
+      });
+
+    function save_purchase(){
+        var supplier = $("#supplier").val();
+        $.ajax({
+            url:"/purchase_submit/",
+            data:{"supplier":supplier},
+            type:"get",
+            success: function (data) {
+                if(data.code == 200){
+                    alert("success");
+                    window.location.reload()
+                }else{
+                    alert(data.detail)
+                }
+            }
+        })
+    }
+
+    function deleteRecoad(id){
+        $.ajax({
+            url:"/purchase_delete/",
+            type:"get",
+            data:{id:id},
+            success: function (data) {
+                if(data.code == 200){
+                    alert("success");
+                    window.location.reload()
+                }else{
+                    alert(data.detail)
+                }
+            }
+        })
+    }
+
+
+
+
+
+    </script>
+{% endblock %}

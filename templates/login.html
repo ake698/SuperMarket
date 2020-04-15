@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>用户登陆</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="all,follow">
+    <link href="/static/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,700">
+    <link rel="stylesheet" href="/static/css/style.default.css" id="theme-stylesheet">
+  </head>
+  <body>
+    <div class="page login-page">
+      <div class="container d-flex align-items-center">
+        <div class="form-holder has-shadow">
+          <div class="row">
+            <!-- Logo & Information Panel-->
+            <div class="col-lg-6">
+              <div class="info d-flex align-items-center">
+                <div class="content">
+                  <div class="logo">
+                    <h1>欢迎登录</h1>
+                  </div>
+                  <p>欢迎来到用户登陆</p>
+                </div>
+              </div>
+            </div>
+            <!-- Form Panel    -->
+            <div class="col-lg-6 bg-white">
+              <div class="form d-flex align-items-center">
+                <div class="content">
+                  <form method="post" class="form-validate" id="loginFrom">
+                    <div class="form-group">
+                      <input id="login-username" type="text" name="userName"  required data-msg="请输入用户名" placeholder="用户名" class="input-material">
+                    </div>
+                    <div class="form-group">
+                      <input id="login-password" type="password" name="passWord" required data-msg="请输入密码" placeholder="密码" class="input-material">
+                    </div>
+                      <div class="form-group">
+                           <input id="j_captcha" type="text" name="code"  class="input-material" placeholder="验证码" style="width:60%;float: left">
+                          <div class="input-group-addon" style="float: right;width: 26%" >
+                                <img src="/getcode/" id="verifyCodeImage" alt="验证码">
+                            </div>
+                      </div>
+
+                    <button id="login" type="button" class="btn btn-primary" style="margin-top: 13%">登录</button>
+
+                  </form>
+                  <br />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- JavaScript files-->
+    <script src="/static/js/jquery-3.1.1.min.js"></script>
+    <script src="/static/js/bootstrap.min.js"></script>
+
+
+    <script>
+    $("#verifyCodeImage").click(function () {
+        $("#verifyCodeImage").attr("src","/getcode/?"+Math.random());
+    });
+    		$("#login").click(function(){
+    			var userName=$("#login-username").val();
+    			var passWord=$("#login-password").val();
+                var j_captcha=$("#j_captcha").val();
+                if(userName==""||passWord==""){
+                    alert("请输入账号密码!");
+                    return;
+                }
+                if(j_captcha==""){
+                    alert("请输入验证码！");
+                    return;
+                }
+                $.ajax({
+                    url:"/login/",
+                    type:"POST",
+                    data:{"userName":userName,"passWord":passWord,"j_captcha":j_captcha},
+                    success: function (data) {
+                        if(data.code==200){
+                            alert("登陆成功！");
+                            window.location.href="/goods/"
+                        }else{
+                            alert(data.detail);
+                            $("#j_captcha").val("");
+                            $("#verifyCodeImage").attr("src","/getcode/?"+Math.random())
+                        }
+                    },
+                    error: function (data) {
+                        console.log("error")
+                    }
+                })
+
+    		});
+
+    </script>
+  </body>
+</html>

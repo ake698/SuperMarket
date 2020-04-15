@@ -1,0 +1,177 @@
+{% extends 'manage/base/base.html' %}
+{% block content %}
+
+    <div class="container-fluid" style="font-size: 18px">
+                <div class="row">
+                    <div class="col-md-2">
+                        <div class="list-group">
+                            <a  class="list-group-item" style="text-align: center">进货操作</a>
+                            <a class="list-group-item active" id="new_in" style="cursor: pointer;">补货</a>
+                        </div>
+                    </div>
+                    <!-- new_in -->
+                    <div class="col-md-10" id="new_in_card">
+                        <div class="card">
+                            <div class="card-header bg-light">
+                                <span>补货</span>
+                            </div>
+                <!-- form with image -->
+                <form id="purchase_form" action="/existpurchase/" method="post" enctype="multipart/form-data">
+                            <div class="card-body">
+                                <div class="row mb-5">
+                                    <div class="col-md-4 mb-4">
+                                        <div>商品信息</div>
+                                        <div class="text-muted small">填写商品基本信息</div>
+                                        <div class="col-md-6" style="text-align: center; margin: 0 auto">
+                                            <div class="form-group" style="width: 150px">
+                                                <label class="form-control-label">&nbsp;</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label class="form-control-label">名称</label>
+                                                    <input type="hidden" name="good_id" value="{{ good.id }}">
+                                                    <input class="form-control input_check" name="good_name" placeholder="输入商品名称"  readonly="readonly" value="{{ good.name }}">
+                                                </div>
+                                            </div>
+
+                                        </div>
+
+{#                                        <div class="row">#}
+{#                                            <div class="col-md-6">#}
+{#                                                <div class="form-group">#}
+{#                                                    <label class="form-control-label">进货价</label>#}
+{#                                                    <input type="text" class="form-control input_check"  name="good_cost_price" placeholder="输入进货价" value="{{ eg.cost_price }}">#}
+{#                                                </div>#}
+{#                                            </div>#}
+{#                                            <div class="col-md-6">#}
+{#                                                <div class="form-group">#}
+{#                                                    <label class="form-control-label">售价</label>#}
+{#                                                    <input type="text" class="form-control input_check"  name="good_sale_price" placeholder="输入售价" value="{{ eg.sale_price }}">#}
+{#                                                </div>#}
+{#                                            </div>#}
+{#                                        </div>#}
+                                    </div>
+                                </div>
+
+                                <hr>
+
+                                <div class="row mt-5">
+                                    <div class="col-md-4 mb-4">
+                                        <div>供应信息</div>
+                                        <div class="text-muted small">填写供应相关信息</div>
+                                    </div>
+
+                                    <div class="col-md-8">
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-control-label">单价</label>
+                                                    <input type="number" class="form-control input_check" name="good_cost_price" placeholder="填写进货单价">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-control-label">数量</label>
+                                                    <input type="number" class="form-control input_check" name="good_num" placeholder="填写进货数量">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+                </form>
+
+                            <div class="card-footer bg-light text-right">
+                                    <button type="submit" class="btn btn-primary" onclick="save_purchase()">保存</button>
+
+                            </div>
+                        </div>
+                    </div>
+                    <!-- //new_in -->
+                    <!-- supplement -->
+                    <!-- //supplement -->
+                </div>
+            </div>
+
+{% endblock %}
+
+{% block js %}
+    <script src="/static/js/jquery.form.js"></script>
+    <script>
+        $('#new_in').on('click', function () {
+            $(this).attr('class', 'list-group-item active');
+            $('#supplement').attr('class', 'list-group-item');
+            $('#withdraw').attr('class', 'list-group-item');
+            {#$('#withdraw_card').css('display', 'none');#}
+            $('#new_in_card').css('display', '');
+            $('#supplement_card').css('display', 'none');
+            history.pushState(null, null, '/purchase')
+        });
+
+        $('#supplement').on('click', function () {
+            $(this).attr('class', 'list-group-item active');
+            $('#new_in').attr('class', 'list-group-item');
+            $('#withdraw').attr('class', 'list-group-item');
+            $('#new_in_card').css('display', 'none');
+            $('#supplement_card').css('display', '');
+
+            $('#withdraw_save').hide();
+            $('#supplement_save').show();
+            $('.provider_info').show();
+            {#history.pushState(null, null, '/purchase?id=')#}
+        });
+        $('#withdraw').on('click', function () {
+            $(this).attr('class', 'list-group-item active');
+            $('#supplement').attr('class', 'list-group-item');
+            $('#new_in').attr('class', 'list-group-item');
+            $('#new_in_card').css('display', 'none');
+            {#$('#withdraw_card').css('display', '');#}
+            $('#supplement_card').css('display', '');
+
+            $('#withdraw_save').show();
+            $('#supplement_save').hide();
+            $('.provider_info').hide();
+            {#history.pushState(null, null, '/purchase?id=')#}
+        });
+
+        function jduge(){
+            flag = true;
+            for(var i=0; i<=3; i++){
+                temp = $("#purchase_form")[0][i].value;
+                if(temp == ""){
+                    flag = false;
+                }
+            }
+            return flag;
+        }
+
+        function save_purchase() {
+            if(jduge()){
+                $('#purchase_form').ajaxSubmit({
+                        success: function (data) {
+                            if(data.code == 200){
+                                alert("成功！");
+                                window.location.href="/addpurchase/"
+                            }
+                        },
+                        error: function (data) {
+                            {#console.log("inside else");#}
+                            alert('数据异常，请检查输入的内容');
+                        }
+                    });
+            }else{
+                alert('请输入完成的信息');
+            }
+
+        }
+
+
+    </script>
+{% endblock %}
