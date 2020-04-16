@@ -144,13 +144,26 @@ def goods(request):
         flag = True
     return render(request, 'manage/goods.html', {"goods": goods, "msg": msg, "flag": flag})
 
-
+@check([0,1])
+#供货商列表
 def supplier(request):
     supplier = Supplier.objects.all()
     key = request.GET.get("Search")
     if key:
         supplier = supplier.filter(id=int(key))
     return render(request, 'manage/supplier.html', {"supplier": supplier,})
+
+@check([0,1])
+#所有退货单
+def return_page(request):
+    user = get_user(request)
+    returns = Return_Record.objects.all()
+    if user.identity == "1":
+        returns = returns.filter(returner=user)
+    key = request.GET.get("Search")
+    if key:
+        returns = returns.filter(id=int(key))
+    return render(request,'manage/return_page.html',{"returns":returns})
 
 
 ########################销售相关#########################
@@ -168,6 +181,7 @@ def goodinfo(request):
                 "name": good.name,
                 "left": good.left_num,
                 "price": good.sale_price,
+                "cost":good.cost_price
             }
             return HttpResponse(json.dumps(result), content_type="application/json")
         else:
@@ -363,6 +377,35 @@ def addPurchase(request):
     return render(request, 'manage/addpurchase.html', {"purchase": purchase,"supplier":supplier})
 
 
+@check([1])
+#新加退货单
+def addreturn(request):
+    if request.method == "POST":
+        data = json.loads(request.body.decode())
+        # 获取商品信息
+        goods = data["goods"]
+        # 订单价格
+        sum_price = 0.00
+        #商品id和数量
+        goods_id_num = ""
+        #商品所有信息
+        goods_all = ""
+        user = get_user(request)
+        for i in goods:
+            good_info = i.split("-")
+            good = Goods.objects.get(id=int(good_info[0]))
+            price = good.cost_price * int(good_info[1])
+            #价钱
+            sum_price += price
+            #商品id和数量
+            goods_id_num += "%s,"%i
+            #商品所有信息
+            goods_all += "%s*%s"%(good.name,good_info[1])
+        #添加退货记录
+        Return_Record.objects.create(returner=user, sum_price=sum_price, goods=goods_all, goods_id_num=goods_id_num)
+        #####添加操作记录
+        return HttpResponse(json.dumps(initJson()), content_type="application/json")
+    return render(request, "manage/addreturn.html")
 ################################################################################财务功能
 
 @check([0])
@@ -402,6 +445,41 @@ def purchase_record_action(requset):
         i.goods.save(ignore=False)
     return HttpResponse(json.dumps(initJson()), content_type="application/json")
 
+@check([0])
+# 对退货单的审核
+def return_record_action(requset):
+    try:
+        id = requset.GET["id"]
+        type = requset.GET["type"]
+    except:
+        return HttpResponse(json.dumps(initJson(success=False)), content_type="application/json")
+    RR = Return_Record.objects.get(id=int(id))
+    if type == "permit":
+        RR.state = 1
+    else:
+        RR.state = 3
+        RR.Auditor = get_user(requset)
+        RR.save()
+        #####################
+        add_history(RR.Auditor, "拒绝退货单%s,金额为%s" % (RR.id, RR.sum_price))
+        return HttpResponse(json.dumps(initJson()), content_type="application/json")
+    RR.Auditor = get_user(requset)
+    RR.state = "1"
+    RR.save()
+    add_history(RR.Auditor, "通过退货单%s,金额为%s" % (RR.id, RR.sum_price))
+    # 更新库存
+    goods_info = str(RR.goods_id_num).split(",")
+    for i in goods_info:
+        if i=="":
+            continue
+        id_num = i.split("-")
+        id = int(id_num[0])
+        num = int(id_num[1])
+        #商品扣除
+        good = Goods.objects.get(id=int(id))
+        good.left_num -= num
+        good.save(ignore=False)
+    return HttpResponse(json.dumps(initJson()), content_type="application/json")
 
 @check([0])
 # 单天销售额

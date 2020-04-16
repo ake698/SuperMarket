@@ -23,15 +23,18 @@ urlpatterns = [
     path("sale/",v.sale),
     path("goodinfo/",v.goodinfo),
     path("order/",v.order),
-    ################进货相关
+    ################库存管理相关
     path("purchase/",v.addGoodCount),
     path("existpurchase/",v.exist_purchase),
     path("purchaselist/",v.purchaseList),
     path("purchase_submit/",v.purchase_submit),
     path("addpurchase/",v.addPurchase),
     path("purchase_delete/",v.deletePurchaseGood),
+    path("add_return/",v.addreturn),
+    path("return_page/",v.return_page),
     #####################财务相关
     path("purchase_record_action/",v.purchase_record_action),
+    path("return_record_action/",v.return_record_action),
     path("dashboard/",v.dashboard),
     path("dashboardym/",v.dashboard_ym),
     path("supplier/",v.supplier),

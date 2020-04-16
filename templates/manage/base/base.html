@@ -105,6 +105,27 @@
                         </ul>
                     </li>
                 {% endif %}
+
+                {% if request.session.identity == "1" or request.session.identity == "0" %}
+                    <li class="nav-item nav-dropdown">
+                        <a href="#" class="nav-link nav-dropdown-toggle">
+                            <i class="icon icon-home"></i>
+                            退货管理
+                            <i class="fa fa-caret-left"></i>
+                        </a>
+                        <ul class="nav-dropdown-items">
+                            <li class="nav-item">
+                                <a href="/return_page/" class="nav-link">所有退货单</a>
+                            </li>
+                            {% if request.session.identity == "1" %}
+                            <li class="nav-item">
+                                <a href="/add_return/" class="nav-link">新建退货单</a>
+                            </li>
+                                {% endif %}
+                        </ul>
+                    </li>
+                {% endif %}
+
                 {% if request.session.identity == "1" or request.session.identity == "0" %}
                     <li class="nav-item">
                         <a href="/supplier/" class="nav-link">

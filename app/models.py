@@ -137,11 +137,18 @@ class Purchase_Record(models.Model):
 
 #退货记录
 class Return_Record(models.Model):
+    stateChoice = (
+        ('1', '已通过审核'),
+        ('2', '暂未审核'),
+        ('3', '拒绝'),
+    )
     id = models.AutoField(primary_key=True, max_length=100, verbose_name="ID")
     returner = models.ForeignKey(Users, on_delete=models.CASCADE,related_name="returner",verbose_name="退货人")
     Auditor = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="审核人", null=True, blank=True)
     sum_price = models.FloatField(verbose_name="总价格")
+    state = models.CharField(verbose_name="状态", choices=stateChoice, max_length=1, default="2")
     goods = models.CharField(max_length=200,verbose_name="退货商品")
+    goods_id_num = models.CharField(max_length=200,verbose_name="退货商品和数量",default="")
 
     def __str__(self):
         return str(self.id)
