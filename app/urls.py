@@ -38,6 +38,8 @@ urlpatterns = [
     path("return_record_action/",v.return_record_action),
     path("dashboard/",v.dashboard),
     path("dashboardym/",v.dashboard_ym),
+    path("pr_dashboard/",v.pr_dashboard),
+    path("dashboardym/",v.dashboard_ym),
     path("supplier/",v.supplier),
     path("",v.goods),
 ]

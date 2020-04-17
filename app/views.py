@@ -294,12 +294,13 @@ def addGoodCount(request):
     if request.method == "POST":
         good_name = request.POST['good_name']
         good_cost_price = float(request.POST['good_cost_price'])
-        # good_sale_price = float(request.POST['good_sale_price'])
+        #利润率
+        good_margin = float(request.POST['good_sale_price'])
         good_num = request.POST['good_num']
         good_unit = request.POST['good_unit']
         # 新建商品
         good = Goods.objects.create(name=good_name, cost_price=good_cost_price,
-                                    unit=good_unit)
+                                    unit=good_unit,margin=good_margin)
         #########添加记录
         user = get_user(request)
         add_history(user, "添加新的商品%s" % good.name)
@@ -367,10 +368,13 @@ def purchase_submit(request):
         return HttpResponse(json.dumps(result), content_type="application/json")
     PR.isSubmit = True
     price = 0
+    count = 0
     for i in PR.purchases.all():
         price += i.sum_price
+        count += i.purchase_num
     # print("最终进货价：%s" % price)
     PR.sum_price = price
+    PR.good_count = count
     #供应商
     supplier_id = request.GET.get("supplier")
     PR.supplier = Supplier.objects.get(id=int(supplier_id))
@@ -579,6 +583,38 @@ def dashboard_ym(request):
                                                        "good_count": good_count, "date": return_date,
                                                        "sale_list": sale_list, "date_list": date_list})
 
+# 单天进货统计
+def pr_dashboard(request):
+    date = request.GET.get("date")
+    return_date = date
+    if date:
+        # print(date)
+        date = datetime.strptime(date, "%Y-%m-%d")
+        PR = Purchase_Record.objects.filter(createTime__date=date).filter(state="1")
+    else:
+        now = datetime.now()
+        date = now.date()
+        PR = Purchase_Record.objects.filter(createTime__date=date).filter(state="1")
+    # print(order)
+    sum = get_Sum2(PR)
+    sum_price = sum[0]
+    good_count = sum[1]
+
+    purchase_list = []
+    date_list = []
+    for i in range(0, 7).__reversed__():
+        d_date = date - timedelta(days=i)
+        day_PR = Purchase_Record.objects.filter(createTime__date=d_date).filter(state="1")
+        d_sum = get_Sum2(day_PR)
+        purchase_list.append(d_sum[0])
+        date_list.append(d_date.strftime("%Y-%m-%d"))
+    sc = Supplier.objects.count()
+
+    return render(request, 'manage/PRdashboard.html', {"PR": PR,"date":return_date,
+                                                     "sum_price": sum_price, "sc": sc,
+                                                     "good_count": good_count,
+                                                     "purchase_list": purchase_list, "date_list": date_list})
+
 
 # 获取销售额度
 def get_Sum(order):
@@ -591,6 +627,14 @@ def get_Sum(order):
         count += i.good_count
     return [money, profile, count]
 
+# 获取进货额度
+def get_Sum2(PR):
+    money = 0
+    count = 0
+    for i in PR:
+        money += i.sum_price
+        count += i.good_count
+    return [money, count]
 
 # 记录操作历史
 def add_history(user, action):

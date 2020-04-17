@@ -93,6 +93,11 @@
 
     function save_purchase(){
         var supplier = $("#supplier").val();
+        console.log(supplier)
+        if(supplier==null){
+            alert("没有供应商!");
+            return;
+        }
         $.ajax({
             url:"/purchase_submit/",
             data:{"supplier":supplier},

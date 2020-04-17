@@ -7,7 +7,7 @@ class UsersAdmin(admin.ModelAdmin):
     list_editable = ("state",)
 
 class GoodsAdmin(admin.ModelAdmin):
-    list_display = ("id","name","sale_price","left_num","cost_price","unit","flag")
+    list_display = ("id","name","sale_price","left_num","cost_price","margin","unit","flag")
     list_editable = ("flag",)
 
 class PurchaseAdmin(admin.ModelAdmin):

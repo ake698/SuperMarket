@@ -35,7 +35,7 @@ class Users(models.Model):
 class VIP(models.Model):
     id = models.AutoField(primary_key=True, max_length=100, verbose_name="ID")
     nickname = models.CharField(max_length=30, verbose_name="昵称")
-    phone = models.CharField(max_length=11, verbose_name="联系电话")
+    phone = models.CharField(max_length=11, verbose_name="联系电话",unique=True)
     account = models.FloatField(verbose_name="积分", default=0)
     createTime = models.DateTimeField(auto_now=True, verbose_name="创建时间")
 
@@ -124,9 +124,10 @@ class Purchase_Record(models.Model):
     purchaser = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="purchaser", verbose_name="进货人")
     Auditor = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="审核人", null=True, blank=True)
     state = models.CharField(verbose_name="状态", choices=stateChoice, max_length=1, default="2")
+    good_count = models.IntegerField(verbose_name="订单商品数量", default=0)
     isSubmit = models.BooleanField(verbose_name="是否提交", default=False)
     createTime = models.DateTimeField(auto_now=True, verbose_name="创建时间")
-    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, verbose_name="进货厂商", default="1")
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, verbose_name="进货厂商",null=True)
 
     def __str__(self):
         return str(self.id)
@@ -187,7 +188,7 @@ class Order(models.Model):
     good_count = models.IntegerField(verbose_name="订单商品数量", default=0)
     profile = models.FloatField(verbose_name="利润", default=0)
     saler = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="售货员")
-    # vip = models.ForeignKey(VIP, on_delete=models.CASCADE, verbose_name="会员", null=True)
+    vip = models.ForeignKey(VIP, on_delete=models.CASCADE, verbose_name="会员", null=True)
     createTime = models.DateTimeField(auto_now=True, verbose_name="创建时间")
 
     def __str__(self):

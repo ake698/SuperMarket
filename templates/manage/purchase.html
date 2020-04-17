@@ -47,18 +47,18 @@
                                         </div>
 
                                         <div class="row">
-                                            <div class="col-md-12">
+                                            <div class="col-md-6">
                                                 <div class="form-group">
                                                     <label class="form-control-label">进货价</label>
                                                     <input type="text" class="form-control input_check"  name="good_cost_price" placeholder="输入进货价" value="{{ eg.cost_price }}">
                                                 </div>
                                             </div>
-{#                                            <div class="col-md-6">#}
-{#                                                <div class="form-group">#}
-{#                                                    <label class="form-control-label">售价</label>#}
-{#                                                    <input type="text" class="form-control input_check"  name="good_sale_price" placeholder="输入售价" value="{{ eg.sale_price }}">#}
-{#                                                </div>#}
-{#                                            </div>#}
+                                            <div class="col-md-6">
+                                                <div class="form-group">
+                                                    <label class="form-control-label">利润率</label>
+                                                    <input type="text" class="form-control input_check"  name="good_sale_price" placeholder="输入利润率" value="{{ eg.sale_price }}">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -143,7 +143,7 @@
 
         function jduge(){
             flag = true;
-            for(var i=0; i<=3; i++){
+            for(var i=0; i<=4; i++){
                 temp = $("#purchase_form")[0][i].value;
                 if(temp == ""){
                     flag = false;
