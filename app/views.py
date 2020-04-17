@@ -144,6 +144,25 @@ def goods(request):
         flag = True
     return render(request, 'manage/goods.html', {"goods": goods, "msg": msg, "flag": flag})
 
+
+#获取单个VIP信息
+def get_VIP(request):
+    if request.method == "POST":
+        phone = request.POST['phone']
+        Vip = VIP.objects.filter(phone=phone)
+        if Vip:
+            vip = Vip.first()
+            result = initJson()
+            result['detail'] = {
+                "id":vip.id,
+                "phone": vip.phone,
+                "name": vip.nickname,
+                "account": vip.account,
+            }
+            return HttpResponse(json.dumps(result), content_type="application/json")
+        else:
+            return HttpResponse(json.dumps(initJson(success=False)), content_type="application/json")
+
 @check([0,1])
 #供货商列表
 def supplier(request):
@@ -196,6 +215,7 @@ def sale(request):
         # 获取商品信息
         goods = data["goods"]
         money = float(data["money"])
+        vipid = int(data["vipid"])
         # 订单应收
         sum_price = 0.00
         # 订单总利润
@@ -228,6 +248,12 @@ def sale(request):
         order.profile = sum_profile
         order.good_count = good_count
         order.save()
+        ####################添加积分
+        vip = VIP.objects.filter(id=int(vipid))
+        if vip:
+            vip = vip.first()
+            vip.account += sum_price
+            vip.save()
         #####################添加销售记录操作
         add_history(user, "新建销售订单，订单号为%s，金额为：%s" % (order.id, order.sum_price))
         return HttpResponse(json.dumps(initJson()), content_type="application/json")

@@ -9,6 +9,7 @@
                                 收银台：<span class="loc" id="tert">{{ request.session.nickName }}</span>
                             <div class="w3l_search float-right">
                                 <form autocomplete="off">
+                                     <input id="vip_phone" type="text" name="phone" onkeyup = "value=value.replace(/[^\d]/g,'')" style="Float:left;height:35px;font-size: 16px" placeholder="输入商品会员" >
                                     <a id="sale_complete" class="btn btn-success" style="color:#fff;Float:left;height:35px;margin-right: 50px" aria-label="Left Align">
                                         <i class="fa fa-check" aria-hidden="true"> </i>  结算
                                     </a>
@@ -49,11 +50,13 @@
             <lable>应收：</lable><span id="price_all_again">0</span>
         </div>
         <div>
-            <form autocomplete="off"><label>实收：</label>
+            <form autocomplete="off">
+                <label>实收：</label>
                 <input id="money_input" type="text" style="height:35px;font-size: 16px" onkeydown="if(event.keyCode==13){$('#key_add').click();return false;}">
                 <a id="price_allin" class="btn btn-outline-secondary" style="height:35px" aria-label="Left Align">
                     全款
                 </a>
+
                 <div class="clearfix"></div>
             </form>
         </div>
@@ -66,6 +69,7 @@
 {% endblock %}
 {% block js %}
 <script>
+var vipid = -1;
 function count_all() {
     {#console.log($(obj).parent().siblings('#price').attr('name'));#}
     {#console.log($('.table tr').find('#price'));#}
@@ -75,7 +79,6 @@ function count_all() {
     });
     $('#price_all').text(add_up.toFixed(2));
 }
-
 $('#key_add').click(function(){
     if($('#key_input').val() != ''){
     $.ajax({
@@ -189,7 +192,7 @@ function add_record() {
             url:"/sale/",
             type:"post",
             dataType:'json',
-            data:JSON.stringify({goods:arr,money:money}),
+            data:JSON.stringify({goods:arr,money:money,vipid:vipid}),
             success:function(data) {
                 if(data.code == 200){
                 console.log("success");
@@ -208,11 +211,13 @@ function add_record() {
 }
 
 $('#sale_complete').on('click', function () {
-   $('.make_change').fadeIn();
-   $('.make_change').siblings().css('pointer-events', 'none');
-   $('#price_all_again').text($('#price_all').text());
-   $('#the_change').text(0);
-   $('#money_input').val('');
+    get_vip();
+    $('.make_change').fadeIn();
+    $('.make_change').siblings().css('pointer-events', 'none');
+    $('#price_all_again').text($('#price_all').text());
+    $('#the_change').text(0);
+    $('#money_input').val('');
+
 });
 
 function close_change() {
@@ -238,6 +243,7 @@ $('#money_input').keydown(function (event) {
 });
 
 $('.mc_check').on('click', function () {
+
     if(parseFloat($('#money_input').val()) < parseFloat($('#price_all_again').text()) || $('#money_input').val().length === 0){
             alert('请输入大于或小于应收金额的数额！')
         }
@@ -248,8 +254,33 @@ $('.mc_check').on('click', function () {
             add_record();
         }
 
-})
+});
 
+function get_vip(){
+    vipid = -1;
+    var phone = $("#vip_phone").val();
+    if (phone==""){
+        console.log("None");
+        return true;
+    }else{
+        $.ajax({
+            url:"/get_vip/",
+            type:"post",
+            data:{phone:phone},
+            success:function (data) {
+                if(data.code == 200){
+                    console.log("vip");
+                    vipid = data.detail.id;
+                    return true
+                }else{
+                    alert("此用户不是vip！");
+                    return false;
+                }
+            }
+        })
+    }
+
+}
 
 
 

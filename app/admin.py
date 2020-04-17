@@ -26,11 +26,15 @@ class HistoryAdmin(admin.ModelAdmin):
 class SupplierAdmin(admin.ModelAdmin):
     list_display = ("id","name","phone","address")
 
+class VIPAdmin(admin.ModelAdmin):
+    list_display = ("id","nickname","phone","account","createTime")
+
 admin.site.register(Users,UsersAdmin)
 admin.site.register(Goods,GoodsAdmin)
 admin.site.register(Purchase_Record,PurchaseAdmin)
 admin.site.register(Order,OrderAdmin)
 admin.site.register(History,HistoryAdmin)
 admin.site.register(Supplier,SupplierAdmin)
+admin.site.register(VIP,VIPAdmin)
 admin.site.site_title = "超市系统管理后台"
 admin.site.site_header = "超市系统管理后台"

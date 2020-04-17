@@ -30,12 +30,13 @@ class Users(models.Model):
         verbose_name = "员工管理"
         verbose_name_plural = "员工管理"
 
-#会员管理
+
+# 会员管理
 class VIP(models.Model):
     id = models.AutoField(primary_key=True, max_length=100, verbose_name="ID")
     nickname = models.CharField(max_length=30, verbose_name="昵称")
     phone = models.CharField(max_length=11, verbose_name="联系电话")
-    account = models.FloatField(verbose_name="积分")
+    account = models.FloatField(verbose_name="积分", default=0)
     createTime = models.DateTimeField(auto_now=True, verbose_name="创建时间")
 
     def __str__(self):
@@ -45,7 +46,8 @@ class VIP(models.Model):
         verbose_name = "会员管理"
         verbose_name_plural = "会员管理"
 
-#供货商
+
+# 供货商
 class Supplier(models.Model):
     id = models.AutoField(primary_key=True, max_length=100, verbose_name="ID")
     name = models.CharField(max_length=20, verbose_name="供应商名称")
@@ -75,15 +77,15 @@ class Goods(models.Model):
     # sale_num = models.IntegerField(default=0,null=True,verbose_name="商品已卖出数量")        # 出售数量
     unit = models.CharField(max_length=5, default="个", verbose_name="单位")
     flag = models.CharField(verbose_name="是否上架", choices=stateChoice, max_length=1, default="F")
-    margin = models.FloatField(verbose_name="利润率%",default=20,max_length=4)
+    margin = models.FloatField(verbose_name="利润率%", default=20, max_length=4)
 
     def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None,ignore=True):
+             update_fields=None, ignore=True):
         if ignore:
-            goods_price = round(self.cost_price * (1 + self.margin / 100),2)
+            goods_price = round(self.cost_price * (1 + self.margin / 100), 2)
             self.sale_price = goods_price
         # self.save()
-        super(Goods,self).save()
+        super(Goods, self).save()
 
     def __str__(self):
         return self.name
@@ -109,7 +111,6 @@ class Purchase(models.Model):
         verbose_name_plural = "商品管理"
 
 
-
 # 进货单
 class Purchase_Record(models.Model):
     stateChoice = (
@@ -125,7 +126,7 @@ class Purchase_Record(models.Model):
     state = models.CharField(verbose_name="状态", choices=stateChoice, max_length=1, default="2")
     isSubmit = models.BooleanField(verbose_name="是否提交", default=False)
     createTime = models.DateTimeField(auto_now=True, verbose_name="创建时间")
-    supplier = models.ForeignKey(Supplier,on_delete=models.CASCADE,verbose_name="进货厂商",default="1")
+    supplier = models.ForeignKey(Supplier, on_delete=models.CASCADE, verbose_name="进货厂商", default="1")
 
     def __str__(self):
         return str(self.id)
@@ -135,7 +136,8 @@ class Purchase_Record(models.Model):
         verbose_name_plural = "进货管理"
         ordering = ["-id"]
 
-#退货记录
+
+# 退货记录
 class Return_Record(models.Model):
     stateChoice = (
         ('1', '已通过审核'),
@@ -143,12 +145,12 @@ class Return_Record(models.Model):
         ('3', '拒绝'),
     )
     id = models.AutoField(primary_key=True, max_length=100, verbose_name="ID")
-    returner = models.ForeignKey(Users, on_delete=models.CASCADE,related_name="returner",verbose_name="退货人")
+    returner = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="returner", verbose_name="退货人")
     Auditor = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="审核人", null=True, blank=True)
     sum_price = models.FloatField(verbose_name="总价格")
     state = models.CharField(verbose_name="状态", choices=stateChoice, max_length=1, default="2")
-    goods = models.CharField(max_length=200,verbose_name="退货商品")
-    goods_id_num = models.CharField(max_length=200,verbose_name="退货商品和数量",default="")
+    goods = models.CharField(max_length=200, verbose_name="退货商品")
+    goods_id_num = models.CharField(max_length=200, verbose_name="退货商品和数量", default="")
 
     def __str__(self):
         return str(self.id)
@@ -185,6 +187,7 @@ class Order(models.Model):
     good_count = models.IntegerField(verbose_name="订单商品数量", default=0)
     profile = models.FloatField(verbose_name="利润", default=0)
     saler = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="售货员")
+    # vip = models.ForeignKey(VIP, on_delete=models.CASCADE, verbose_name="会员", null=True)
     createTime = models.DateTimeField(auto_now=True, verbose_name="创建时间")
 
     def __str__(self):
@@ -196,7 +199,7 @@ class Order(models.Model):
         ordering = ["-id"]
 
 
-#操作历史
+# 操作历史
 class History(models.Model):
     id = models.AutoField(primary_key=True, max_length=100, verbose_name="ID")
     user = models.ForeignKey(Users, on_delete=models.CASCADE, verbose_name="操作人", null=True, blank=True)

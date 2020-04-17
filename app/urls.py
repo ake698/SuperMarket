@@ -19,6 +19,7 @@ import app.views as v
 urlpatterns = [
     path("goods/",v.goods),
     path("history/",v.history_page),
+    path("get_vip/",v.get_VIP),
     #########销售相关
     path("sale/",v.sale),
     path("goodinfo/",v.goodinfo),
