@@ -194,8 +194,8 @@ class Order(models.Model):
         return str(self.id)
 
     class Meta:
-        verbose_name = "订单管理"
-        verbose_name_plural = "订单管理"
+        verbose_name = "销售管理"
+        verbose_name_plural = "销售管理"
         ordering = ["-id"]
 
 

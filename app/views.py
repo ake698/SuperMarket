@@ -245,7 +245,7 @@ def sale(request):
         # 添加销售记录
         order.sum_price = sum_price
         order.out_money = money - sum_price
-        order.profile = sum_profile
+        order.profile = round(sum_profile,2)
         order.good_count = good_count
         order.save()
         ####################添加积分
@@ -264,12 +264,14 @@ def sale(request):
 @check([0, 2])
 def order(requset):
     user = get_user(requset)
-    if user.identity == 0:
+    order = Order.objects.all()
+    print(user.identity)
+    if user.identity == "0":
         # 财务可看所有
-        order = Order.objects.all()
+        pass
     else:
         # 为销售  只能看自己销售的订单
-        order = Order.objects.filter(saler=user)
+        order = order.filter(saler=user)
     return render(requset, 'manage/order.html', {"order": order})
 
 
