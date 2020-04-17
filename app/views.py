@@ -245,7 +245,7 @@ def sale(request):
         # 添加销售记录
         order.sum_price = sum_price
         order.out_money = money - sum_price
-        order.profile = sum_profile
+        order.profile = round(sum_profile,2)
         order.good_count = good_count
         order.save()
         ####################添加积分
