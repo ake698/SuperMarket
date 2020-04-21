@@ -133,18 +133,18 @@ def goods(request):
     key = request.GET.get("Search")
     if key:
         goods = goods.filter(id=int(key))
-    # 商品提醒
-    flag = goods.filter(left_num__lt=5)
-    msg = ""
-    if flag:
-        goods_tip = ""
-        for i in flag:
-            goods_tip = i.name + " "
-        msg = "商品:%s,不足，请及时补充！" % goods_tip
-        flag = True
+    # 商品提醒  商品出售数量的 20 % 大于等于商品数量的时候提醒
+    goods_tip = ""
+    flag = False
+    for i in goods:
+        warning = int(i.sale_num * 0.2)
+        if warning >= i.left_num:
+            goods_tip += i.name + " "
+            flag = True
+    msg = "商品:%s不足，请及时补充！" % goods_tip
     return render(request, 'manage/goods.html', {"goods": goods, "msg": msg, "flag": flag})
 
-
+@check([0,1,2])
 #获取单个VIP信息
 def get_VIP(request):
     if request.method == "POST":
@@ -241,6 +241,8 @@ def sale(request):
             order.sales.add(sale)
             # 扣除商品数量
             good.left_num = good.left_num - int(good_info[1])
+            # 添加商品卖出数量
+            good.sale_num = good.sale_num + int(good_info[1])
             good.save()
         ####################添加积分
         vip = VIP.objects.filter(id=int(vipid))
@@ -628,20 +630,20 @@ def pr_dashboard_ym(request):
     if not year or year == "":
         year = now.year
         return_date = "%s" % now.year
-    PR = Purchase_Record.objects.filter(createTime__year=int(year))
+    PR = Purchase_Record.objects.filter(createTime__year=int(year)).filter(state="1")
 
     if month and month != "":
         return_date += "-" + str(month)
         PR = PR.filter(createTime__month=int(month))
         for i in range(int(month) - 3, int(month) + 1):
             date_list.append("%s-%s" % (year, i))
-            temp_PR = Purchase_Record.objects.filter(createTime__month=i).filter(createTime__year=year)
+            temp_PR = Purchase_Record.objects.filter(createTime__month=i).filter(createTime__year=year).filter(state="1")
             d_sum = get_Sum2(temp_PR)
             purchase_list.append(d_sum[0])
     else:
         for i in range(int(year) - 3, int(year) + 1):
             date_list.append(i)
-            temp_PR = Purchase_Record.objects.filter(createTime__year=i)
+            temp_PR = Purchase_Record.objects.filter(createTime__year=i).filter(state="1")
             d_sum = get_Sum2(temp_PR)
             purchase_list.append(d_sum[0])
     sum = get_Sum2(PR)

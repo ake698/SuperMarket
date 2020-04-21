@@ -29,6 +29,7 @@
                                         <th>收钱</th>
                                         <th>找钱</th>
                                         <th>操作人</th>
+                                        <th>会员</th>
                                         <th>创建时间</th>
                                         {% if request.session.identity == "1" %}
                                         <th>操作</th>
@@ -45,6 +46,7 @@
                                         <td class="text-nowrap">{{ g.in_money }}</td>
                                         <td>{{ g.out_money }}</td>
                                         <td>{{ g.saler.nickname }}</td>
+                                        <td>{{ g.vip.nickname }}</td>
                                         <td>{{ g.createTime }}</td>
                                         <td>
                                             {% if request.session.identity == "1" %}
