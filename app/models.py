@@ -70,11 +70,10 @@ class Goods(models.Model):
     )
     id = models.AutoField(primary_key=True, max_length=100, verbose_name="ID")
     name = models.CharField(max_length=20, verbose_name="商品名称")
-    # img = models.ImageField(upload_to='goods/',default="author/default.jpg",blank=True,verbose_name="商品图片")
     sale_price = models.FloatField(verbose_name="出售价格")  # 出售价格
     left_num = models.IntegerField(default=0, verbose_name="商品数量")  # 剩余数量
     cost_price = models.FloatField(default=0, verbose_name="进货单价")  # 进货价格
-    # sale_num = models.IntegerField(default=0,null=True,verbose_name="商品已卖出数量")        # 出售数量
+    sale_num = models.IntegerField(default=0,null=True,verbose_name="商品已卖出数量")        # 出售数量
     unit = models.CharField(max_length=5, default="个", verbose_name="单位")
     flag = models.CharField(verbose_name="是否上架", choices=stateChoice, max_length=1, default="F")
     margin = models.FloatField(verbose_name="利润率%", default=20, max_length=4)
