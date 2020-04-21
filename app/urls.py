@@ -18,6 +18,7 @@ from django.urls import path
 import app.views as v
 urlpatterns = [
     path("goods/",v.goods),
+    path("ranking/",v.ranking),
     path("history/",v.history_page),
     path("get_vip/",v.get_VIP),
     #########销售相关
