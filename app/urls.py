@@ -40,6 +40,7 @@ urlpatterns = [
     path("dashboardym/",v.dashboard_ym),
     path("pr_dashboard/",v.pr_dashboard),
     path("dashboardym/",v.dashboard_ym),
+    path("pr_dashboardym/",v.pr_dashboard_ym),
     path("supplier/",v.supplier),
     path("",v.goods),
 ]
