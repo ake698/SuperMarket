@@ -81,7 +81,7 @@ class Goods(models.Model):
     def save(self, force_insert=False, force_update=False, using=None,
              update_fields=None, ignore=True):
         if ignore:
-            goods_price = round(self.cost_price * (1 + self.margin / 100), 2)
+            goods_price = round(self.cost_price * (1 + self.margin / 100), 1)
             self.sale_price = goods_price
         # self.save()
         super(Goods, self).save()

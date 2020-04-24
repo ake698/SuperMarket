@@ -228,7 +228,7 @@ def sale(request):
         out_money = float(data["charge"])
         vipid = int(data["vipid"])
         # 订单应收
-        sum_price = 0.00
+        sum_price = 0.0
         # 订单总利润
         sum_profile = 0
         # 订单总商品数量
@@ -265,7 +265,7 @@ def sale(request):
         # 添加销售记录
         order.sum_price = sum_price
         order.out_money = out_money
-        order.profile = round(sum_profile,2)
+        order.profile = round(sum_profile,1)
         order.good_count = good_count
         order.save()
 
@@ -438,7 +438,7 @@ def addreturn(request):
         # 获取商品信息
         goods = data["goods"]
         # 订单价格
-        sum_price = 0.00
+        sum_price = 0.0
         #商品id和数量
         goods_id_num = ""
         #商品所有信息
@@ -489,7 +489,7 @@ def purchase_record_action(requset):
         new_cost = i.purchase_num * i.goods_price
         last_cost = (cost + new_cost) * (1 + i.goods.margin / 100)
         sale_price = last_cost / (i.purchase_num + i.goods.left_num)
-        i.goods.sale_price = round(sale_price,2)
+        i.goods.sale_price = round(sale_price,1)
         #商品入库上架
         i.goods.left_num = i.purchase_num + i.goods.left_num
         i.goods.flag = "T"
@@ -550,7 +550,7 @@ def dashboard(request):
     # print(order)
     sum = get_Sum(order)
     sum_price = sum[0]
-    sum_profile = round(sum[1], 2)
+    sum_profile = round(sum[1], 1)
     good_count = sum[2]
 
     sale_list = []
@@ -629,7 +629,7 @@ def dashboard_ym(request):
             sale_list.append(d_sum[0])
     sum = get_Sum(order)
     sum_price = sum[0]
-    sum_profile = round(sum[1], 2)
+    sum_profile = round(sum[1], 1)
     good_count = sum[2]
     return render(request, 'manage/dashboardym.html', {"order": order,
                                                        "sum_price": sum_price, "sum_profile": sum_profile,
@@ -665,7 +665,7 @@ def pr_dashboard_ym(request):
             purchase_list.append(d_sum[0])
     sum = get_Sum2(PR)
     sum_price = sum[0]
-    # sum_profile = round(sum[1], 2)
+    # sum_profile = round(sum[1], 1)
     good_count = sum[1]
     sc = Supplier.objects.count()
     return render(request, 'manage/PRdashboardym.html', {"PR": PR,
