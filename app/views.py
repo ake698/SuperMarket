@@ -215,6 +215,7 @@ def sale(request):
         # 获取商品信息
         goods = data["goods"]
         money = float(data["money"])
+        out_money = float(data["charge"])
         vipid = int(data["vipid"])
         # 订单应收
         sum_price = 0.00
@@ -253,7 +254,7 @@ def sale(request):
             order.vip = vip
         # 添加销售记录
         order.sum_price = sum_price
-        order.out_money = money - sum_price
+        order.out_money = out_money
         order.profile = round(sum_profile,2)
         order.good_count = good_count
         order.save()
