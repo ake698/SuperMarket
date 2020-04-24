@@ -144,6 +144,16 @@ def goods(request):
     msg = "商品:%s不足，请及时补充！" % goods_tip
     return render(request, 'manage/goods.html', {"goods": goods, "msg": msg, "flag": flag})
 
+@check([0, 1, 2])
+# 商品列表
+def ranking(request):
+    goods = Goods.objects.filter(flag="T")
+    key = request.GET.get("Search")
+    if key:
+        goods = goods.filter(id=int(key))
+    goods = goods.order_by("-sale_num")
+    return render(request, 'manage/salesranking.html', {"goods": goods,})
+
 @check([0,1,2])
 #获取单个VIP信息
 def get_VIP(request):
@@ -382,7 +392,13 @@ def purchase_submit(request):
     PR.good_count = count
     #供应商
     supplier_id = request.GET.get("supplier")
-    PR.supplier = Supplier.objects.get(id=int(supplier_id))
+    s = Supplier.objects.filter(id=int(supplier_id))
+    if supplier_id and s:
+        PR.supplier = s.first()
+    else:
+        result = initJson(success=False)
+        result["detail"] = "请添加供应商！"
+        return HttpResponse(json.dumps(result), content_type="application/json")
     PR.save()
     #######添加进货单
     add_history(get_user(request), "添加进货单(待审核),ID:%s，金额为：%s" % (PR.id, PR.sum_price))
